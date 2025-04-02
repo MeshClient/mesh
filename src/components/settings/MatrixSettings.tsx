@@ -1,0 +1,48 @@
+import React, { useState } from 'react';
+import { useSettings } from '../../hooks/useSettings';
+
+const MatrixSettings: React.FC = () => {
+  const { settings, updateSettings } = useSettings();
+  const [homeserver, setHomeserver] = useState(settings.matrix.homeserver);
+
+  const handleSave = async () => {
+    await updateSettings({
+      matrix: {
+        homeserver,
+      }
+    });
+  };
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-4">Matrix Connection Settings</h2>
+      
+      <div className="mb-6">
+        <label className="block text-sm font-medium mb-2" htmlFor="homeserver">
+          Homeserver URL
+        </label>
+        <div className="flex space-x-2">
+          <input
+            id="homeserver"
+            type="text"
+            className="px-3 py-2 bg-background-secondary border border-border-primary rounded-md w-full"
+            value={homeserver}
+            onChange={(e) => setHomeserver(e.target.value)}
+            placeholder="https://matrix.org"
+          />
+          <button 
+            className="px-4 py-2 bg-accent-primary text-white rounded-md"
+            onClick={handleSave}
+          >
+            Save
+          </button>
+        </div>
+        <p className="mt-1 text-sm text-text-secondary">
+          The URL of your Matrix homeserver. Default is matrix.org.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default MatrixSettings;
