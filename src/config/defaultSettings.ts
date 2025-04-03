@@ -5,7 +5,9 @@ export const defaultSettings: Settings = {
         homeserver: 'https://matrix.org'
     },
     ui: {
-        themeId: 'dark'
+        themeId: 'dark',
+        useSystemTheme: false,
+        fontFamily: 'Inter'
     },
     notifications: {
         enabled: true,

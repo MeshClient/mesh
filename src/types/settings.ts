@@ -4,6 +4,8 @@ export interface MatrixSettings {
 
 export interface UISettings {
     themeId: string;
+    useSystemTheme?: boolean;
+    fontFamily?: string;
 }
 
 export interface NotificationSettings { // TODO: rough draft

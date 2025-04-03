@@ -4,7 +4,8 @@ import ThemeSettings from './ThemeSettings';
 import MatrixSettings from './MatrixSettings';
 import NotificationSettings from './NotificationSettings';
 import PrivacySettings from './PrivacySettings';
-import { useSettings } from "../../hooks/useSettings";
+import { useSettings } from "@/hooks/useSettings.ts";
+import { Button } from '../ui/button';
 
 const SettingsPanel: React.FC = () => {
     const { settings, resetSettings } = useSettings();
@@ -42,31 +43,31 @@ const SettingsPanel: React.FC = () => {
             </Tabs>
 
             <div className="mt-8 flex justify-between">
-                <button
-                    className="px-4 py-2 bg-status-error text-white rounded-md"
+                <Button
+                    variant="destructive"
                     onClick={() => resetSettings()}
                 >
                     Reset All Settings
-                </button>
+                </Button>
 
-                <div>
-                    <button
-                        className="px-4 py-2 bg-status-info text-white rounded-md mr-2"
+                <div className="space-x-2">
+                    <Button
+                        variant="default"
                         onClick={async () => {
                             // TODO: Implement export dialog here
                         }}
                     >
                         Export Settings
-                    </button>
+                    </Button>
 
-                    <button
-                        className="px-4 py-2 bg-status-info text-white rounded-md"
+                    <Button
+                        variant="secondary"
                         onClick={() => {
                             // TODO: Implement import dialog here
                         }}
                     >
                         Import Settings
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

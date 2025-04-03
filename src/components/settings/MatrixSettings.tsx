@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useSettings } from '../../hooks/useSettings';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
 const MatrixSettings: React.FC = () => {
   const { settings, updateSettings } = useSettings();
@@ -18,24 +21,23 @@ const MatrixSettings: React.FC = () => {
       <h2 className="text-xl font-bold mb-4">Matrix Connection Settings</h2>
       
       <div className="mb-6">
-        <label className="block text-sm font-medium mb-2" htmlFor="homeserver">
+        <Label className="block text-sm font-medium mb-2" htmlFor="homeserver">
           Homeserver URL
-        </label>
+        </Label>
         <div className="flex space-x-2">
-          <input
+          <Input
             id="homeserver"
             type="text"
-            className="px-3 py-2 bg-background-secondary border border-border-primary rounded-md w-full"
+            className="bg-background-secondary border-border-primary"
             value={homeserver}
             onChange={(e) => setHomeserver(e.target.value)}
             placeholder="https://matrix.org"
           />
-          <button 
-            className="px-4 py-2 bg-accent-primary text-white rounded-md"
+          <Button 
             onClick={handleSave}
           >
             Save
-          </button>
+          </Button>
         </div>
         <p className="mt-1 text-sm text-text-secondary">
           The URL of your Matrix homeserver. Default is matrix.org.

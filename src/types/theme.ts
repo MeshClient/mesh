@@ -5,6 +5,7 @@ export interface ThemeColors {
     background: {
         primary: string;
         secondary: string;
+        tertiary: string;
     };
     text: {
         primary: string;
@@ -16,12 +17,6 @@ export interface ThemeColors {
         success: string;
         warning: string;
         error: string;
-    };
-    // Matrix colors
-    message: {
-        sent: string;
-        received: string;
-        encrypted: string;
     };
 }
 

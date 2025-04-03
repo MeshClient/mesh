@@ -1,109 +1,50 @@
-import React, { createContext, useContext, useState } from "react";
+import * as React from "react"
+import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-interface TabsContextType {
-  value: string;
-  onValueChange: (value: string) => void;
-}
+import { cn } from "@/lib/utils.ts"
 
-const TabsContext = createContext<TabsContextType | undefined>(undefined);
+const Tabs = TabsPrimitive.Root
 
-interface TabsProps {
-  defaultValue: string;
-  value?: string;
-  onValueChange?: (value: string) => void;
-  children: React.ReactNode;
-}
+const TabsList = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.List
+    ref={ref}
+    className={cn(
+      "flex space-x-2 border-b border-border-primary",
+      className
+    )}
+    {...props}
+  />
+))
+TabsList.displayName = TabsPrimitive.List.displayName
 
-export const Tabs: React.FC<TabsProps> = ({
-  defaultValue,
-  value,
-  onValueChange,
-  children,
-}) => {
-  const [tabValue, setTabValue] = useState(defaultValue);
-  
-  const currentValue = value !== undefined ? value : tabValue;
-  const handleValueChange = onValueChange || setTabValue;
+const TabsTrigger = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      "tabs-trigger px-4 py-2 rounded-t-md relative transition-all duration-200 ease-in-out hover:text-accent-primary data-[state=active]:bg-background-secondary data-[state=active]:border-b-2 data-[state=active]:border-accent-primary data-[state=active]:font-medium data-[state=active]:text-accent-primary data-[state=inactive]:hover:bg-input before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-0 before:bg-accent-primary hover:before:w-full before:transition-all before:duration-300",
+      className
+    )}
+    {...props}
+  />
+))
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
-  return (
-    <TabsContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
-      <div className="tabs">{children}</div>
-    </TabsContext.Provider>
-  );
-};
+const TabsContent = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Content
+    ref={ref}
+    className={cn("tabs-content p-4", className)}
+    {...props}
+  />
+))
+TabsContent.displayName = TabsPrimitive.Content.displayName
 
-interface TabsListProps {
-  className?: string;
-  children: React.ReactNode;
-}
-
-export const TabsList: React.FC<TabsListProps> = ({ className, children }) => {
-  return (
-    <div className={`tabs-list flex space-x-2 border-b border-border-primary ${className || ""}`}>
-      {children}
-    </div>
-  );
-};
-
-interface TabsTriggerProps {
-  value: string;
-  className?: string;
-  children: React.ReactNode;
-}
-
-export const TabsTrigger: React.FC<TabsTriggerProps> = ({
-  value,
-  className,
-  children,
-}) => {
-  const context = useContext(TabsContext);
-  
-  if (!context) {
-    throw new Error("TabsTrigger must be used within a Tabs component");
-  }
-
-  const { value: selectedValue, onValueChange } = context;
-  const isSelected = selectedValue === value;
-
-  return (
-    <button
-      className={`tabs-trigger px-4 py-2 rounded-t-md ${
-        isSelected 
-          ? "bg-background-secondary border-b-2 border-accent-primary font-medium" 
-          : "hover:bg-background-hover"
-      } ${className || ""}`}
-      onClick={() => onValueChange(value)}
-    >
-      {children}
-    </button>
-  );
-};
-
-interface TabsContentProps {
-  value: string;
-  className?: string;
-  children: React.ReactNode;
-}
-
-export const TabsContent: React.FC<TabsContentProps> = ({
-  value,
-  className,
-  children,
-}) => {
-  const context = useContext(TabsContext);
-  
-  if (!context) {
-    throw new Error("TabsContent must be used within a Tabs component");
-  }
-
-  const { value: selectedValue } = context;
-  const isSelected = selectedValue === value;
-
-  if (!isSelected) return null;
-
-  return (
-    <div className={`tabs-content p-4 ${className || ""}`}>
-      {children}
-    </div>
-  );
-};
+export { Tabs, TabsList, TabsTrigger, TabsContent }

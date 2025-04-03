@@ -1,4 +1,4 @@
-import { Theme } from '../types/theme';
+import {Theme} from '../types/theme';
 
 export const lightTheme: Theme = {
     metadata: {
@@ -8,29 +8,25 @@ export const lightTheme: Theme = {
         version: '1.0.0',
     },
     colors: {
-        primary: '#5c6bc0',
-        secondary: '#26a69a',
-        accent: '#ec407a',
+        primary: '#6B8CDF',
+        secondary: '#E9ECEF',
+        accent: '#A78BFA',
         background: {
-            primary: '#ffffff',
-            secondary: '#f5f5f5',
+            primary: '#FAFAFA',
+            secondary: '#F5F5F5',
+            tertiary: '#acc4ea',
         },
         text: {
-            primary: '#212121',
-            secondary: '#757575',
-            accent: '#5c6bc0',
+            primary: '#343A40',
+            secondary: '#6C757D',
+            accent: '#ADB5BD',
         },
         status: {
-            info: '#2196f3',
-            success: '#4caf50',
-            warning: '#ff9800',
-            error: '#f44336',
-        },
-        message: {
-            sent: '#e3f2fd',
-            received: '#f5f5f5',
-            encrypted: '#e8f5e9',
-        },
+            info: '#73C2FB',
+            success: '#82C99B',
+            warning: '#FDCA95',
+            error: '#F99A9A',
+        }
     },
     fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -51,29 +47,25 @@ export const darkTheme: Theme = {
         version: '1.0.0',
     },
     colors: {
-        primary: '#7986cb',
-        secondary: '#4db6ac',
-        accent: '#f48fb1',
+        primary: '#7289DA',
+        secondary: '#36393F',
+        accent: '#9B84EE',
         background: {
-            primary: '#121212',
-            secondary: '#1e1e1e',
+            primary: '#202225',
+            secondary: '#2F3136',
+            tertiary: '#41596f',
         },
         text: {
-            primary: '#ffffff',
-            secondary: '#b0b0b0',
-            accent: '#7986cb',
+            primary: '#FFFFFF',
+            secondary: '#B9BBBE',
+            accent: '#8E9297',
         },
         status: {
-            info: '#42a5f5',
-            success: '#66bb6a',
-            warning: '#ffa726',
-            error: '#ef5350',
-        },
-        message: {
-            sent: '#1a237e20',
-            received: '#263238',
-            encrypted: '#1b5e2020',
-        },
+            info: '#3498DB',
+            success: '#43B581',
+            warning: '#FAA61A',
+            error: '#F04747',
+        }
     },
     fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -86,5 +78,74 @@ export const darkTheme: Theme = {
     },
 };
 
+export const highContrastLightTheme: Theme = {
+    metadata: {
+        id: 'high-contrast-light',
+        name: 'High Contrast Light',
+        author: 'Default',
+        version: '1.0.0',
+    },
+    colors: {
+        primary: '#5865F2',
+        secondary: '#E3E5E8',
+        accent: '#8B73FF',
+        background: {
+            primary: '#FFFFFF',
+            secondary: '#F2F3F5',
+            tertiary: '#5c6e8c',
+        },
+        text: {
+            primary: '#2E3338',
+            secondary: '#747F8D',
+            accent: '#99AAB5',
+        },
+        status: {
+            info: '#3498DB',
+            success: '#3BA55C',
+            warning: '#F0B232',
+            error: '#ED4245',
+        }
+    },
+    fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['Fira Code', 'monospace'],
+    },
+}
 
-export const defaultThemes = [lightTheme, darkTheme];
+export const highContrastDarkTheme = {
+    metadata: {
+        id: 'high-contrast-dark',
+        name: 'High Contrast Dark',
+        author: 'Default',
+        version: '1.0.0',
+    },
+    colors: {
+        primary: '#5D8AA8',
+        secondary: '#1E1E1E',
+        accent: '#BB86FC',
+        background: {
+            primary: '#121212',
+            secondary: '#1E1E1E',
+            tertiary: '#2F4F4F',
+        },
+        text: {
+            primary: '#FFFFFF',
+            secondary: '#CCCCCC',
+            accent: '#A0A0A0',
+        },
+        status: {
+            info: '#64B5F6',
+            success: '#66BB6A',
+            warning: '#FFA726',
+            error: '#EF5350',
+        },
+        message: {
+            sent: '#2D3748',
+            received: '#1A202C',
+            encrypted: '#2F4F4F',
+        }
+    },
+}
+
+
+export const defaultThemes = [lightTheme, darkTheme, highContrastLightTheme, highContrastDarkTheme];

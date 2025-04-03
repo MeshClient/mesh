@@ -5,6 +5,8 @@ export interface ThemeContextType {
     currentTheme: Theme;
     availableThemes: Theme[];
     setTheme: (themeId: string) => void;
+    setUseSystemTheme: (useSystemTheme: boolean) => void;
+    setFontFamily: (fontFamily: string) => void;
     addCustomTheme: (theme: Theme) => void;
     removeCustomTheme: (themeId: string) => void;
 }
