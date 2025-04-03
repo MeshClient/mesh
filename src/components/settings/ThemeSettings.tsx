@@ -134,7 +134,7 @@ const ThemeSettings: React.FC = () => {
             <p className="text-lg" style={{ fontFamily: settings.ui.fontFamily }}>
               The quick brown fox jumps over the lazy dog.
             </p>
-            <p className="text-sm mt-2" style={{ fontFamily: settings.ui.fontFamily }}>
+            <p className="text-sm break-all mt-2" style={{ fontFamily: settings.ui.fontFamily }}>
               ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
             </p>
           </CardContent>

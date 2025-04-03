@@ -27,7 +27,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "tabs-trigger px-4 py-2 rounded-t-md relative transition-all duration-200 ease-in-out hover:text-accent-primary data-[state=active]:bg-background-secondary data-[state=active]:border-b-2 data-[state=active]:border-accent-primary data-[state=active]:font-medium data-[state=active]:text-accent-primary data-[state=inactive]:hover:bg-input before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-0 before:bg-accent-primary hover:before:w-full before:transition-all before:duration-300",
+      "tabs-trigger px-4 py-2 rounded-t-md relative transition-all duration-200 ease-in-out hover:text-accent-primary data-[state=active]:bg-background-secondary border-b-2 data-[state=inactive]:border-transparent data-[state=active]:border-accent-primary data-[state=active]:font-medium data-[state=active]:text-accent-primary data-[state=inactive]:hover:bg-input before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-0 before:bg-accent-primary hover:before:w-full before:transition-all before:duration-300",
       className
     )}
     {...props}
@@ -41,7 +41,7 @@ const TabsContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
-    className={cn("tabs-content p-4", className)}
+    className={cn("tabs-content p-4 animate-in fade-in-50 data-[state=active]:duration-300", className)}
     {...props}
   />
 ))

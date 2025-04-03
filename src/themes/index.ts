@@ -124,9 +124,9 @@ export const highContrastDarkTheme = {
         secondary: '#1E1E1E',
         accent: '#BB86FC',
         background: {
-            primary: '#121212',
-            secondary: '#1E1E1E',
-            tertiary: '#2F4F4F',
+            primary: '#030403',
+            secondary: '#141414',
+            tertiary: '#3F5F5F',
         },
         text: {
             primary: '#FFFFFF',
@@ -138,11 +138,6 @@ export const highContrastDarkTheme = {
             success: '#66BB6A',
             warning: '#FFA726',
             error: '#EF5350',
-        },
-        message: {
-            sent: '#2D3748',
-            received: '#1A202C',
-            encrypted: '#2F4F4F',
         }
     },
 }

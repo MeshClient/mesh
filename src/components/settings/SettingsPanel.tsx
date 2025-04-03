@@ -11,7 +11,7 @@ const SettingsPanel: React.FC = () => {
     const { settings, resetSettings } = useSettings();
 
     return (
-        <div className="p-4 bg-background-primary text-text-primary">
+        <div className="p-4 bg-background-primary text-text-primary max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
             <Tabs defaultValue="appearance">
@@ -42,8 +42,9 @@ const SettingsPanel: React.FC = () => {
                 </TabsContent>
             </Tabs>
 
-            <div className="mt-8 flex justify-between">
+            <div className="flex flex-wrap justify-between">
                 <Button
+                    className="mb-4"
                     variant="destructive"
                     onClick={() => resetSettings()}
                 >
@@ -52,7 +53,8 @@ const SettingsPanel: React.FC = () => {
 
                 <div className="space-x-2">
                     <Button
-                        variant="default"
+                        className="mb-4"
+                        variant="secondary"
                         onClick={async () => {
                             // TODO: Implement export dialog here
                         }}
@@ -61,6 +63,7 @@ const SettingsPanel: React.FC = () => {
                     </Button>
 
                     <Button
+                        className="mb-4"
                         variant="secondary"
                         onClick={() => {
                             // TODO: Implement import dialog here
