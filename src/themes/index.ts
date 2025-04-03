@@ -17,15 +17,15 @@ export const lightTheme: Theme = {
             tertiary: '#acc4ea',
         },
         text: {
-            primary: '#343A40',
-            secondary: '#6C757D',
+            primary: '#2c3035',
+            secondary: '#3e4545',
             accent: '#ADB5BD',
         },
         status: {
             info: '#73C2FB',
             success: '#82C99B',
             warning: '#FDCA95',
-            error: '#F99A9A',
+            error: '#ff9e9e',
         }
     },
     fontFamily: {
@@ -64,7 +64,7 @@ export const darkTheme: Theme = {
             info: '#3498DB',
             success: '#43B581',
             warning: '#FAA61A',
-            error: '#F04747',
+            error: '#f33a3a',
         }
     },
     fontFamily: {
@@ -95,15 +95,15 @@ export const highContrastLightTheme: Theme = {
             tertiary: '#5c6e8c',
         },
         text: {
-            primary: '#2E3338',
-            secondary: '#747F8D',
+            primary: '#17191c',
+            secondary: '#2d333a',
             accent: '#99AAB5',
         },
         status: {
             info: '#3498DB',
             success: '#3BA55C',
             warning: '#F0B232',
-            error: '#ED4245',
+            error: '#ffc7c7',
         }
     },
     fontFamily: {
@@ -137,7 +137,7 @@ export const highContrastDarkTheme = {
             info: '#64B5F6',
             success: '#66BB6A',
             warning: '#FFA726',
-            error: '#EF5350',
+            error: '#97100d',
         }
     },
 }

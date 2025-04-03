@@ -28,7 +28,7 @@ const MatrixSettings: React.FC = () => {
           <Input
             id="homeserver"
             type="text"
-            className="bg-background-secondary border-border-primary"
+            className="bg-background-secondary border-border"
             value={homeserver}
             onChange={(e) => setHomeserver(e.target.value)}
             placeholder="https://matrix.org"

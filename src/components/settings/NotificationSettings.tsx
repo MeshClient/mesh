@@ -125,7 +125,7 @@ const NotificationSettings: React.FC = () => {
                     </Label>
                     <Input
                       type="time"
-                      className="bg-background-secondary border-border-primary"
+                      className="bg-background-secondary border-border"
                       value={notifSettings.quietHours.start}
                       onChange={(e) => handleTimeChange('start', e.target.value)}
                     />
@@ -136,7 +136,7 @@ const NotificationSettings: React.FC = () => {
                     </Label>
                     <Input
                       type="time"
-                      className="bg-background-secondary border-border-primary"
+                      className="bg-background-secondary border-border"
                       value={notifSettings.quietHours.end}
                       onChange={(e) => handleTimeChange('end', e.target.value)}
                     />
