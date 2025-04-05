@@ -1,5 +1,5 @@
-import { createContext } from 'react';
-import { Settings } from '../types/settings';
+import {createContext} from 'react';
+import {Settings} from '../types/settings';
 
 export interface SettingsContextType {
     settings: Settings;

@@ -10,7 +10,7 @@ export const lightTheme: Theme = {
     colors: {
         primary: '#6B8CDF',
         secondary: '#E9ECEF',
-        accent: '#A78BFA',
+        accent: '#116a7c',
         background: {
             primary: '#FAFAFA',
             secondary: '#F5F5F5',
@@ -49,7 +49,7 @@ export const darkTheme: Theme = {
     colors: {
         primary: '#7289DA',
         secondary: '#36393F',
-        accent: '#9B84EE',
+        accent: '#01a3b8',
         background: {
             primary: '#202225',
             secondary: '#2F3136',
@@ -88,7 +88,7 @@ export const highContrastLightTheme: Theme = {
     colors: {
         primary: '#5865F2',
         secondary: '#E3E5E8',
-        accent: '#8B73FF',
+        accent: '#004750',
         background: {
             primary: '#FFFFFF',
             secondary: '#F2F3F5',
@@ -122,7 +122,7 @@ export const highContrastDarkTheme = {
     colors: {
         primary: '#5D8AA8',
         secondary: '#1E1E1E',
-        accent: '#BB86FC',
+        accent: '#00BCD4',
         background: {
             primary: '#030403',
             secondary: '#141414',

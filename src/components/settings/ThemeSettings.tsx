@@ -52,8 +52,8 @@ const ThemeSettings: React.FC = () => {
                                 key={theme.metadata.id}
                                 className={`cursor-pointer border-2 transform transition-transform duration-300
                                 ${currentTheme.metadata.id === theme.metadata.id
-                                    ? 'border-ring hover:border-ring/70 hover:-translate-y-1'
-                                    : 'border-border hover:border-border/70 hover:-translate-y-1'}`}
+                                    ? 'border-ring hover:border-accent hover:-translate-y-1'
+                                    : 'border-border hover:border-accent hover:-translate-y-1'}`}
                                 onClick={() => setTheme(theme.metadata.id)}
                             >
                                 <CardContent className="p-4">

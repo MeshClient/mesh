@@ -1,14 +1,14 @@
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '../ui/tabs';
 import ThemeSettings from './ThemeSettings';
 import MatrixSettings from './MatrixSettings';
 import NotificationSettings from './NotificationSettings';
 import PrivacySettings from './PrivacySettings';
-import { useSettings } from "@/hooks/useSettings.ts";
-import { Button } from '../ui/button';
+import {useSettings} from "@/hooks/useSettings.ts";
+import {Button} from '../ui/button';
 
 const SettingsPanel: React.FC = () => {
-    const { settings, resetSettings } = useSettings();
+    const {settings, resetSettings} = useSettings();
 
     return (
         <div className="p-4 bg-background-primary text-text-primary max-w-6xl mx-auto">
@@ -26,19 +26,19 @@ const SettingsPanel: React.FC = () => {
                 </TabsList>
 
                 <TabsContent value="appearance">
-                    <ThemeSettings />
+                    <ThemeSettings/>
                 </TabsContent>
 
                 <TabsContent value="matrix">
-                    <MatrixSettings />
+                    <MatrixSettings/>
                 </TabsContent>
 
                 <TabsContent value="notifications">
-                    <NotificationSettings />
+                    <NotificationSettings/>
                 </TabsContent>
 
                 <TabsContent value="privacy">
-                    <PrivacySettings />
+                    <PrivacySettings/>
                 </TabsContent>
             </Tabs>
 

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { LazyStore } from '@tauri-apps/plugin-store';
-import { Settings, SettingsTypes } from '../types/settings';
-import { defaultSettings } from '../config/defaultSettings';
-import { SettingsContext } from './SettingsContext.types';
+import React, {useEffect, useState} from 'react';
+import {LazyStore} from '@tauri-apps/plugin-store';
+import {Settings, SettingsTypes} from '../types/settings';
+import {defaultSettings} from '../config/defaultSettings';
+import {SettingsContext} from './SettingsContext.types';
 
 const store = new LazyStore('settings.json');
 
-export const SettingsProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [settings, setSettings] = useState<Settings>(defaultSettings);
     const [loaded, setLoaded] = useState(false);
 
@@ -46,7 +46,7 @@ export const SettingsProvider: React.FC<{children: React.ReactNode}> = ({ childr
     const resetSettings = async (settingType?: SettingsTypes) => {
         try {
             if (settingType) {
-                const newSettings = { ...settings, [settingType]: defaultSettings[settingType] };
+                const newSettings = {...settings, [settingType]: defaultSettings[settingType]};
                 setSettings(newSettings);
                 await store.set('settings', newSettings);
             } else {
@@ -76,24 +76,24 @@ export const SettingsProvider: React.FC<{children: React.ReactNode}> = ({ childr
     };
 
     const deepMerge = <T extends object>(target: T, source: Partial<T>): T => {
-        const output = { ...target };
+        const output = {...target};
 
         if (isObject(target) && isObject(source)) {
             Object.keys(source).forEach(key => {
                 const sourceKey = key as keyof typeof source;
                 const targetKey = key as keyof typeof target;
-                
+
                 if (isObject(source[sourceKey])) {
                     if (!(key in target)) {
-                        Object.assign(output, { [key]: source[sourceKey] });
+                        Object.assign(output, {[key]: source[sourceKey]});
                     } else {
                         output[targetKey] = deepMerge(
-                            target[targetKey] as object, 
+                            target[targetKey] as object,
                             source[sourceKey] as object
                         ) as T[keyof T];
                     }
                 } else {
-                    Object.assign(output, { [key]: source[sourceKey] });
+                    Object.assign(output, {[key]: source[sourceKey]});
                 }
             });
         }
