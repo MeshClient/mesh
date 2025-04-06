@@ -155,6 +155,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-log",
  "tauri-plugin-store",
+ "tokio",
  "url",
 ]
 

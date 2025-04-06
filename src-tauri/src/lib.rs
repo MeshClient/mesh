@@ -1,10 +1,12 @@
 pub mod media;
 pub mod inout;
+pub mod client;
 
-use tauri::command;
+use tauri::{command, Manager};
 use font_kit::source::SystemSource;
 use std::collections::HashSet;
 use reqwest::Client as HttpClient;
+use std::sync::Mutex;
 
 use matrix_sdk::{
     config::SyncSettings,
@@ -18,6 +20,7 @@ use url::Url;
 
 use crate::media::*;
 use crate::inout::*;
+use crate::client::*;
 
 #[command]
 fn get_system_fonts() -> Result<Vec<String>, String> {
@@ -39,16 +42,16 @@ fn get_system_fonts() -> Result<Vec<String>, String> {
 #[command]
 async fn fetch_url(url: String) -> Result<String, String> {
     let http_client = HttpClient::new();
-    
+
     let response = match http_client.get(&url).send().await {
         Ok(res) => res,
         Err(err) => return Err(format!("Failed to fetch URL: {}", err)),
     };
-    
+
     if !response.status().is_success() {
         return Err(format!("Failed to fetch URL: HTTP {}", response.status()));
     }
-    
+
     match response.text().await {
         Ok(text) => Ok(text),
         Err(err) => Err(format!("Failed to get response text: {}", err)),
@@ -56,28 +59,26 @@ async fn fetch_url(url: String) -> Result<String, String> {
 }
 
 #[command]
-async fn get_login_options(homeserver_url: String) -> Result<Vec<LoginOption>, String> {
-    let homeserver_url = url::Url::parse(&homeserver_url);
-    match homeserver_url {
-        Ok(_) => {},
+async fn get_login_options(
+    state: tauri::State<'_, Mutex<MeshClient>>,
+    homeserver_url: String
+    ) -> Result<Vec<LoginOption>, String> {
+    let homeserver_url = match Url::parse(&homeserver_url) {
+        Ok(url) => url,
         Err(err) => return Err(format!("{err}")),
     };
 
-    let client = Client::new(homeserver_url.unwrap()).await;
-    match client {
-        Ok(_) => {},
+    let client = match Client::new(homeserver_url).await {
+        Ok(client) => client,
         Err(err) => return Err(format!("{err}")),
     };
 
 
     let mut options: Vec<LoginOption> = Vec::new();
-    let logins = client.unwrap().matrix_auth().get_login_types().await;
-    match logins {
-        Ok(_) => {},
+    let login_types = match client.matrix_auth().get_login_types().await {
+        Ok(logins) => logins.flows,
         Err(err) => return Err(format!("{err}")),
     };
-
-    let login_types = logins.unwrap().flows;
 
     for login_type in login_types {
         match login_type {
@@ -97,9 +98,77 @@ async fn get_login_options(homeserver_url: String) -> Result<Vec<LoginOption>, S
     Ok(options)
 }
 
+#[command]
+fn get_username(state: tauri::State<'_, Mutex<MeshClient>>) -> Result<Option<String>, String> {
+    let client_lock = match state.lock() {
+        Ok(lock) => lock,
+        Err(err) => return Err(format!("{err}"))
+    };
+    Ok(client_lock.username.clone())
+}
+
+#[command]
+async fn login(
+    state: tauri::State<'_, Mutex<MeshClient>>, 
+    kind: String, 
+    username: String, 
+    password: String
+    ) -> Result<(), String> {
+
+    let mut client_lock = match state.lock() {
+        Ok(lock) => lock,
+        Err(err) => return Err(format!("{err}"))
+    };
+
+    match kind {
+        kind if kind == "Password".to_string() => {
+            match client_lock
+                .client
+                .as_ref()
+                .unwrap()
+                .matrix_auth()
+                .login_username(&username, &password)
+                .initial_device_display_name("Mesh Client")
+                .await
+            {
+                Ok(_) => println!("Successfully logged in!"),
+                Err(err) => eprintln!("{}", err)
+            }
+            client_lock.username = Some(username);
+            client_lock.client.as_ref().unwrap().add_event_handler(on_room_message);
+            match client_lock.client.as_ref().unwrap().sync(SyncSettings::new()).await {
+                Ok(_) => {}
+                Err(err) => return Err(format!("{err}"))
+            }
+        }
+        _ => return Err(format!("Unknown login kind {kind}"))
+    }
+
+    Ok(())
+}
+
+async fn on_room_message(event: OriginalSyncRoomMessageEvent, room: Room) {
+    if room.state() != RoomState::Joined {
+        return;
+    }
+
+    let MessageType::Text(msgtype) = &event.content.msgtype else {
+        return;
+    };
+
+    println!("{}", msgtype.body);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .manage(Mutex::new(
+                MeshClient {
+                    homeserver_url: None,
+                    username: None,
+                    client: None
+                }
+                ))
         .plugin(tauri_plugin_store::Builder::new().build())
         .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options, fetch_url])
         .setup(|app| {
