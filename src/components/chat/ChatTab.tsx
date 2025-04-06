@@ -4,6 +4,7 @@ import {Input} from '../ui/input';
 import {Button} from '../ui/button';
 import {MessageGroup} from "@/components/chat/MessageGroup.tsx";
 import {Message} from "@/components/chat/types.ts";
+import TypingIndicator, {TypingUser} from "@/components/chat/TypingIndicator.tsx";
 
 
 interface ChatTabProps {
@@ -15,7 +16,11 @@ interface ChatTabProps {
 
 const ChatTab: React.FC<ChatTabProps> = ({roomName, roomType = 'group', onActivate}) => {
     const [inputValue, setInputValue] = useState('');
-    const [typingIndicator, setTypingIndicator] = useState<string | null>('alice');
+    const [typingUsers, setTypingUsers] = useState<TypingUser[]>([
+        { id: 'user1', name: 'Alice', avatarUrl: 'https://i.imgur.com/pn3oJUs.png' },
+        { id: 'user2', name: 'Bob', avatarUrl: '' },
+        { id: 'user3', name: 'Alice', avatarUrl: 'https://i.imgur.com/pn3oJUs.png' },
+    ]);
 
     // TODO: Replace with actual messages
     // Move this to a custom hook or context
@@ -108,12 +113,7 @@ const ChatTab: React.FC<ChatTabProps> = ({roomName, roomType = 'group', onActiva
                 ))}
             </div>
 
-            {/* Typing Indicator */}
-            {typingIndicator && (
-                <div className="px-4 py-1 text-xs text-text-secondary">
-                    {typingIndicator} is typing...
-                </div>
-            )}
+            <TypingIndicator users={typingUsers} />
 
             {/* Input Area */}
             <div className="p-3 border-t border-border">

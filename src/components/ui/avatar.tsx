@@ -2,13 +2,15 @@ import * as React from "react"
 import {cn} from "@/lib/utils"
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
-    size?: "sm" | "md" | "lg"
+    size?: "xxs" | "xs" | "sm" | "md" | "lg"
     fallback?: string
 }
 
 const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
     ({className, children, size = "md", ...props}, ref) => {
         const sizeClasses = {
+            xxs: "h-3 w-3",
+            xs: "h-5 w-5",
             sm: "h-6 w-6",
             md: "h-10 w-10",
             lg: "h-14 w-14"
