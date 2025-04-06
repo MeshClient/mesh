@@ -5,6 +5,8 @@ import {Button} from '../ui/button';
 import {MessageGroup} from "@/components/chat/MessageGroup.tsx";
 import {Message} from "@/components/chat/types.ts";
 import TypingIndicator, {TypingUser} from "@/components/chat/TypingIndicator.tsx";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {EmojiPicker} from "@/components/emoji/EmojiPicker";
 
 
 interface ChatTabProps {
@@ -17,9 +19,9 @@ interface ChatTabProps {
 const ChatTab: React.FC<ChatTabProps> = ({roomName, roomType = 'group', onActivate}) => {
     const [inputValue, setInputValue] = useState('');
     const [typingUsers, setTypingUsers] = useState<TypingUser[]>([
-        { id: 'user1', name: 'Alice', avatarUrl: 'https://i.imgur.com/pn3oJUs.png' },
-        { id: 'user2', name: 'Bob', avatarUrl: '' },
-        { id: 'user3', name: 'Alice', avatarUrl: 'https://i.imgur.com/pn3oJUs.png' },
+        {id: 'user1', name: 'Alice', avatarUrl: 'https://i.imgur.com/pn3oJUs.png'},
+        {id: 'user2', name: 'Bob', avatarUrl: ''},
+        {id: 'user3', name: 'Alice', avatarUrl: 'https://i.imgur.com/pn3oJUs.png'},
     ]);
 
     // TODO: Replace with actual messages
@@ -113,7 +115,7 @@ const ChatTab: React.FC<ChatTabProps> = ({roomName, roomType = 'group', onActiva
                 ))}
             </div>
 
-            <TypingIndicator users={typingUsers} />
+            <TypingIndicator users={typingUsers}/>
 
             {/* Input Area */}
             <div className="p-3 border-t border-border">
@@ -134,14 +136,21 @@ const ChatTab: React.FC<ChatTabProps> = ({roomName, roomType = 'group', onActiva
                             >
                                 <Paperclip className="h-4 w-4 text-text-secondary"/>
                             </Button>
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 rounded-full bg-transparent"
-                            >
-                                <Smile className="h-4 w-4 text-text-secondary"/>
-                            </Button>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-7 w-7 rounded-full bg-transparent"
+                                    >
+                                        <Smile className="h-4 w-4 text-text-secondary"/>
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="end">
+                                    <EmojiPicker onEmojiSelect={(emoji) => setInputValue(prev => prev + emoji)}/>
+                                </PopoverContent>
+                            </Popover>
                         </div>
                     </div>
                     <Button

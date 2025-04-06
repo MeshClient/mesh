@@ -4,6 +4,7 @@ pub mod inout;
 use tauri::command;
 use font_kit::source::SystemSource;
 use std::collections::HashSet;
+use reqwest::Client as HttpClient;
 
 use matrix_sdk::{
     config::SyncSettings,
@@ -33,6 +34,25 @@ fn get_system_fonts() -> Result<Vec<String>, String> {
     sorted_fonts.sort();
 
     Ok(sorted_fonts)
+}
+
+#[command]
+async fn fetch_url(url: String) -> Result<String, String> {
+    let http_client = HttpClient::new();
+    
+    let response = match http_client.get(&url).send().await {
+        Ok(res) => res,
+        Err(err) => return Err(format!("Failed to fetch URL: {}", err)),
+    };
+    
+    if !response.status().is_success() {
+        return Err(format!("Failed to fetch URL: HTTP {}", response.status()));
+    }
+    
+    match response.text().await {
+        Ok(text) => Ok(text),
+        Err(err) => Err(format!("Failed to get response text: {}", err)),
+    }
 }
 
 #[command]
@@ -81,7 +101,7 @@ async fn get_login_options(homeserver_url: String) -> Result<Vec<LoginOption>, S
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options])
+        .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options, fetch_url])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
