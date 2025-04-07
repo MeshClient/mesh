@@ -6,7 +6,8 @@ use tauri::{command, Manager};
 use font_kit::source::SystemSource;
 use std::collections::HashSet;
 use reqwest::Client as HttpClient;
-use std::sync::Mutex;
+use tokio::sync::Mutex;
+use std::sync::Arc;
 
 use matrix_sdk::{
     config::SyncSettings,
@@ -95,15 +96,16 @@ async fn get_login_options(
         }
     }
 
+    let mut client_lock = state.lock().await;
+
+    client_lock.client = Some(Arc::new(client));
+
     Ok(options)
 }
 
 #[command]
-fn get_username(state: tauri::State<'_, Mutex<MeshClient>>) -> Result<Option<String>, String> {
-    let client_lock = match state.lock() {
-        Ok(lock) => lock,
-        Err(err) => return Err(format!("{err}"))
-    };
+async fn get_username(state: tauri::State<'_, Mutex<MeshClient>>) -> Result<Option<String>, String> {
+    let client_lock = state.lock().await;
     Ok(client_lock.username.clone())
 }
 
@@ -115,10 +117,7 @@ async fn login(
     password: String
     ) -> Result<(), String> {
 
-    let mut client_lock = match state.lock() {
-        Ok(lock) => lock,
-        Err(err) => return Err(format!("{err}"))
-    };
+    let mut client_lock = state.lock().await;
 
     match kind {
         kind if kind == "Password".to_string() => {
@@ -132,9 +131,11 @@ async fn login(
                 .await
             {
                 Ok(_) => println!("Successfully logged in!"),
-                Err(err) => eprintln!("{}", err)
+                Err(err) => {
+                    eprintln!("Login credentials are wrong!");
+                    return Err(format!("{err}"))
+                }
             }
-            client_lock.username = Some(username);
             client_lock.client.as_ref().unwrap().add_event_handler(on_room_message);
             match client_lock.client.as_ref().unwrap().sync(SyncSettings::new()).await {
                 Ok(_) => {}
@@ -144,6 +145,7 @@ async fn login(
         _ => return Err(format!("Unknown login kind {kind}"))
     }
 
+    client_lock.username = Some(username);
     Ok(())
 }
 
@@ -170,7 +172,7 @@ pub fn run() {
                 }
                 ))
         .plugin(tauri_plugin_store::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options, fetch_url, get_username])
+        .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options, fetch_url, get_username, login])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
