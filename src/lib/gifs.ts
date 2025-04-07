@@ -1,10 +1,10 @@
-import {invoke} from "@tauri-apps/api/core";
+import {fetchPage} from "@/api";
 
 const fetchHtmlFromTenor = async (searchQuery: string): Promise<string | null> => {
     try {
         const encodedQuery = encodeURIComponent(searchQuery);
         const searchUrl = `https://tenor.com/search/${encodedQuery}-gifs`;
-        return await invoke<string>('fetch_url', {url: searchUrl});
+        return await fetchPage(searchUrl);
     } catch (error) {
         console.error("Error fetching from Tenor:", error);
         return null;

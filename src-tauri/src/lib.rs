@@ -170,7 +170,7 @@ pub fn run() {
                 }
                 ))
         .plugin(tauri_plugin_store::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options, fetch_url])
+        .invoke_handler(tauri::generate_handler![get_system_fonts, get_login_options, fetch_url, get_username])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(

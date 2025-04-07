@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {invoke} from "@tauri-apps/api/core";
+import {getSystemFonts} from "@/api";
 
 export function useSystemFonts() {
     const [fonts, setFonts] = useState<string[]>([]);
@@ -21,7 +21,7 @@ export function useSystemFonts() {
 
             try {
                 setLoading(true);
-                const systemFonts = await invoke<string[]>('get_system_fonts');
+                const systemFonts = await getSystemFonts();
 
                 const webSafeFontsSet = new Set(webSafeFonts);
                 const uniqueSystemFonts = systemFonts.filter(font => !webSafeFontsSet.has(font));
