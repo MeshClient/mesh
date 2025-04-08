@@ -181,7 +181,7 @@ export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
 
                 <TabsContent value="stickers" className="mt-0 overflow-hidden h-full w-full">
                     <div className="w-full h-full flex items-center justify-center">
-                        <p className="text-muted-foreground text-sm">Stickers coming soon</p>
+                        <p className="text-muted-foreground text-sm">Stickers coming soon</p> {/* TODO: implement stickers */}
                     </div>
                 </TabsContent>
 
@@ -226,7 +226,7 @@ export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
                                 {gifs.map((gifUrl, index) => (
                                     <motion.button
                                         key={index}
-                                        onClick={() => onEmojiSelect(gifUrl)}
+                                        onClick={() => onEmojiSelect(gifUrl)} //TODO: potentially upload gif directly for better compatibility with other clients
                                         className="overflow-hidden rounded hover:ring-2 ring-primary"
                                         initial={{opacity: 0, y: 20}}
                                         animate={{opacity: 1, y: 0}}

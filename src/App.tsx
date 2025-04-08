@@ -48,7 +48,7 @@ const AppContent: React.FC = () => {
         );
     }
 
-    if (!isLoggedIn) {
+    if (isLoggedIn) { // TODO: enable later when login is implemented (!isLoggedIn)
         return (
             <div className="min-h-screen bg-background text-foreground">
                 <LoginPage/>

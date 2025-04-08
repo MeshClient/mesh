@@ -80,12 +80,7 @@ const LoginPage: React.FC = () => {
         setLoginStatus(null);
 
         try {
-            // For now, we just pass homeserver in username format (user@homeserver)
-            const formattedUsername = username.includes('@')
-                ? username
-                : `${username}@${homeserver}`;
-
-            const success = await login(selectedLoginType, formattedUsername, password);
+            const success = await login(selectedLoginType, username, password);
 
             if (success) {
                 setLoginStatus({success: true, message: 'Login successful!'});
