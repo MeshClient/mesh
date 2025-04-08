@@ -148,7 +148,27 @@ const ChatTab: React.FC<ChatTabProps> = ({roomName, roomType = 'group', onActiva
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="end">
-                                    <EmojiPicker onEmojiSelect={(emoji) => setInputValue(prev => prev + emoji)}/>
+                                    <EmojiPicker 
+                                        onEmojiSelect={(emoji, slug) => {
+                                            setInputValue(prev => prev + (slug || emoji));
+                                        }}
+                                        customPacks={[ //TODO: Fetch from server
+                                            {
+                                                name: "Custom Pack",
+                                                slug: "custom-pack",
+                                                source: "matrix://server.org/emojis",
+                                                emojis: [
+                                                    {
+                                                        emoji: "🔥",
+                                                        name: "Fire",
+                                                        slug: "fire_custom",
+                                                        skin_tone_support: false,
+                                                        source: "matrix://server.org/emojis/fire"
+                                                    }
+                                                ]
+                                            }
+                                        ]}
+                                    />
                                 </PopoverContent>
                             </Popover>
                         </div>

@@ -1,51 +1,91 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Input} from '@/components/ui/input'
-import {EmojiCategory, EmojiPickerTab} from '@/types/emoji'
+import {CustomEmojiPack, EmojiCategory, EmojiPickerTab} from '@/types/emoji'
 import {EmojiList} from './EmojiList'
 import {EmojiCategorySelector} from './EmojiCategorySelector'
 import {Image, Search, Smile, StickyNote} from 'lucide-react'
-import emojisData from 'unicode-emoji-json/data-by-group.json'
 import {searchAndDisplayGifs} from "@/lib/gifs.ts"
 import {motion} from 'framer-motion';
 
+const loadEmojiData = async () => {
+    const module = await import('unicode-emoji-json/data-by-group.json');
+    return module.default as EmojiCategory[];
+};
+
 interface EmojiPickerProps {
-    onEmojiSelect: (emoji: string) => void
+    onEmojiSelect: (emoji: string, slug?: string) => void
     className?: string
+    customPacks?: CustomEmojiPack[]
 }
 
-export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
+export function EmojiPicker({onEmojiSelect, className = '', customPacks = []}: EmojiPickerProps) {
     const [activeTab, setActiveTab] = useState<EmojiPickerTab>('emoji')
     const [searchTerm, setSearchTerm] = useState('')
     const [gifSearchTerm, setGifSearchTerm] = useState('')
-    const [emojis, setEmojis] = useState<EmojiCategory[]>(emojisData as EmojiCategory[])
-    const [activeCategory, setActiveCategory] = useState<string>(emojisData[0]?.slug || '')
+    const [isLoadingEmojis, setIsLoadingEmojis] = useState(true)
+    const [standardEmojis, setStandardEmojis] = useState<EmojiCategory[]>([])
+    const [customEmojis, setCustomEmojis] = useState<EmojiCategory[]>(
+        customPacks.map(pack => ({
+            ...pack,
+            isCustom: true
+        }))
+    )
+    const [activeCategory, setActiveCategory] = useState<string>('')
     const [gifs, setGifs] = useState<string[]>([])
     const [isLoadingGifs, setIsLoadingGifs] = useState(false)
     const categoryRefs = useRef<Map<string, HTMLDivElement>>(new Map())
     const scrollContainerRef = useRef<HTMLDivElement>(null)
+    const didInitialLoad = useRef(false)
+
+    useEffect(() => {
+        if (didInitialLoad.current) return;
+
+        const loadEmojis = async () => {
+            try {
+                const data = await loadEmojiData();
+                setStandardEmojis(data);
+                setActiveCategory(data[0]?.slug || '');
+                setIsLoadingEmojis(false);
+                didInitialLoad.current = true;
+            } catch (error) {
+                console.error('Error loading emoji data:', error);
+                setIsLoadingEmojis(false);
+            }
+        };
+
+        loadEmojis().then();
+    }, []);
+
+    const allEmojis = useMemo(() => {
+        return [...customEmojis, ...standardEmojis]
+    }, [standardEmojis, customEmojis])
 
     const filteredEmojis = useMemo(() => {
         if (!searchTerm) {
-            return emojisData as EmojiCategory[]
+            return allEmojis
         }
 
         const normalizedSearchTerm = searchTerm.toLowerCase()
 
-        return (emojisData as EmojiCategory[])
+        return allEmojis
             .map(category => ({
                 ...category,
                 emojis: category.emojis.filter(emoji =>
                     emoji.name.toLowerCase().includes(normalizedSearchTerm) ||
-                    emoji.emoji.includes(normalizedSearchTerm)
+                    emoji.emoji.includes(normalizedSearchTerm) ||
+                    (`:${emoji.slug}:`.toLowerCase().includes(normalizedSearchTerm))
                 )
             }))
             .filter(category => category.emojis.length > 0)
-    }, [searchTerm])
+    }, [searchTerm, allEmojis])
 
     useEffect(() => {
-        setEmojis(filteredEmojis)
-    }, [filteredEmojis])
+        setCustomEmojis(customPacks.map(pack => ({
+            ...pack,
+            isCustom: true
+        })))
+    }, [customPacks])
 
     const scrollToCategory = useCallback((categorySlug: string) => {
         if (categorySlug && scrollContainerRef.current && categoryRefs.current.has(categorySlug)) {
@@ -54,7 +94,7 @@ export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
 
             if (categoryElement) {
                 container.scrollTo({
-                    top: categoryElement.offsetTop - container.offsetTop,
+                    top: categoryElement.offsetTop,
                     behavior: 'smooth'
                 })
             }
@@ -100,6 +140,10 @@ export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
             setSearchTerm('')
         }
     }, [gifs.length, searchTerm])
+
+    const handleEmojiSelect = useCallback((emoji: string, slug?: string) => {
+        onEmojiSelect(emoji, slug)
+    }, [onEmojiSelect])
 
     return (
         <div
@@ -159,33 +203,78 @@ export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
                     )}
                 </div>
 
-                <TabsContent value="emoji" className="mt-0 overflow-hidden h-full">
-                    {emojis.length > 0 && !searchTerm && (
-                        <div className="px-3 pb-2">
-                            <EmojiCategorySelector
-                                categories={emojis}
-                                activeCategory={activeCategory}
-                                onCategoryChange={handleCategoryChange}
-                            />
+                <TabsContent value="emoji" className="p-0 h-full flex-1 overflow-hidden">
+                    {isLoadingEmojis ? (
+                        <div className="flex items-center justify-center h-full">
+                            <motion.div
+                                className="flex flex-col items-center"
+                                initial={{opacity: 0}}
+                                animate={{opacity: 1}}
+                                transition={{duration: 0.3}}
+                            >
+                                <p className="text-muted-foreground text-sm mb-2">Loading emojis</p>
+                                <div className="flex space-x-2">
+                                    {[0, 1, 2].map((i) => (
+                                        <motion.div
+                                            key={i}
+                                            className="w-2 h-2 bg-primary rounded-full"
+                                            animate={{
+                                                y: [0, -10, 0],
+                                                opacity: [0.4, 1, 0.4],
+                                            }}
+                                            transition={{
+                                                duration: 1,
+                                                repeat: Infinity,
+                                                delay: i * 0.2,
+                                                ease: "easeInOut"
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </div>
+                    ) : (
+                        <div className="flex h-full">
+                            <div className="h-full flex-1 overflow-y-auto" ref={scrollContainerRef}>
+                                <EmojiList
+                                    categories={filteredEmojis}
+                                    onEmojiSelect={handleEmojiSelect}
+                                    categoryRefs={categoryRefs}
+                                />
+                            </div>
+
+                            {filteredEmojis.length > 0 && !searchTerm && (
+                                <div className="h-full border-l pl-1 pr-1 flex-shrink-0">
+                                    <EmojiCategorySelector
+                                        categories={allEmojis}
+                                        activeCategory={activeCategory}
+                                        onCategoryChange={handleCategoryChange}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
+                </TabsContent>
 
-                    <div className="h-full overflow-y-auto relative" ref={scrollContainerRef}>
-                        <EmojiList
-                            categories={emojis}
-                            onEmojiSelect={onEmojiSelect}
-                            categoryRefs={categoryRefs}
-                        />
+                <TabsContent value="stickers" className="p-0 overflow-hidden h-full w-full">
+                    <div className="flex h-full">
+                        <div className="h-full overflow-y-auto flex-1">
+                            <div className="w-full h-full flex items-center justify-center">
+                                <p className="text-muted-foreground text-sm">Stickers coming
+                                    soon</p> {/* TODO: implement stickers */}
+                            </div>
+                        </div>
+
+                        <div className="border-l h-full py-2 pl-1 pr-3 flex-shrink-0 overflow-hidden">
+                            <div
+                                className="h-full overflow-y-auto overflow-x-hidden flex flex-col items-center justify-center">
+                                <p className="text-xs text-muted-foreground rotate-90">Sticker packs</p>
+                            </div>
+                        </div>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="stickers" className="mt-0 overflow-hidden h-full w-full">
-                    <div className="w-full h-full flex items-center justify-center">
-                        <p className="text-muted-foreground text-sm">Stickers coming soon</p> {/* TODO: implement stickers */}
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="gifs" className="mt-0 overflow-hidden h-full w-full">
+                <TabsContent value="gifs" className="p-0 overflow-hidden h-full w-full">
                     <div className="w-full h-full overflow-y-auto px-3 py-2">
                         {isLoadingGifs ? (
                             <div className="w-full h-full flex items-center justify-center">
@@ -226,7 +315,7 @@ export function EmojiPicker({onEmojiSelect, className = ''}: EmojiPickerProps) {
                                 {gifs.map((gifUrl, index) => (
                                     <motion.button
                                         key={index}
-                                        onClick={() => onEmojiSelect(gifUrl)} //TODO: potentially upload gif directly for better compatibility with other clients
+                                        onClick={() => handleEmojiSelect(gifUrl)} //TODO: potentially upload gif directly for better compatibility with other clients
                                         className="overflow-hidden rounded hover:ring-2 ring-primary"
                                         initial={{opacity: 0, y: 20}}
                                         animate={{opacity: 1, y: 0}}
