@@ -25,3 +25,8 @@ impl LoginOption {
         }
     }
 }
+
+#[derive(Serialize)]
+pub struct RoomMessage {
+
+}

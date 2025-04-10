@@ -2,13 +2,12 @@ pub mod media;
 pub mod inout;
 pub mod client;
 
-use tauri::{command, Manager};
+use tauri::{command, Manager, Emitter};
 use font_kit::source::SystemSource;
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 use reqwest::Client as HttpClient;
 use tokio::sync::Mutex;
 use std::sync::Arc;
-
 use matrix_sdk::{
     config::SyncSettings,
     ruma::{
@@ -94,8 +93,7 @@ async fn get_login_options(
             }
             _ => {}
         }
-    }
-
+    } 
     let mut client_lock = state.lock().await;
 
     client_lock.client = Some(Arc::new(client));
@@ -137,6 +135,16 @@ async fn login(
                 }
             }
             client_lock.client.as_ref().unwrap().add_event_handler(on_room_message);
+            let rooms = client_lock.client.as_ref().unwrap().joined_rooms();
+            let mut map: HashMap<String, Room> = HashMap::new();
+            for room in rooms {
+                map.insert(room.name().unwrap_or("".to_string()), room);
+            }
+            dbg!(map.clone());
+
+            client_lock.rooms = Some(Arc::new(map));
+            client_lock.username = Some(username);
+
             match client_lock.client.as_ref().unwrap().sync(SyncSettings::new()).await {
                 Ok(_) => {}
                 Err(err) => return Err(format!("{err}"))
@@ -145,8 +153,7 @@ async fn login(
         _ => return Err(format!("Unknown login kind {kind}"))
     }
 
-    client_lock.username = Some(username);
-    Ok(())
+   Ok(())
 }
 
 async fn on_room_message(event: OriginalSyncRoomMessageEvent, room: Room) {
@@ -158,7 +165,8 @@ async fn on_room_message(event: OriginalSyncRoomMessageEvent, room: Room) {
         return;
     };
 
-    println!("{}", msgtype.body);
+    dbg!(room.room_id());
+    //app_handle.emit("room_messages", event).unwrap();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -168,7 +176,8 @@ pub fn run() {
                 MeshClient {
                     homeserver_url: None,
                     username: None,
-                    client: None
+                    client: None,
+                    rooms: None
                 }
                 ))
         .plugin(tauri_plugin_store::Builder::new().build())
